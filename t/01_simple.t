@@ -5,12 +5,12 @@ use Test::More;
 use Router::Boom;
 
 my $builder = Router::Boom->new();
-$builder->register('/', 'dispatch_root');
-$builder->register('/entrylist', 'dispatch_entrylist');
-$builder->register('/:user', 'dispatch_user');
-$builder->register('/:user/{year}', 'dispatch_year');
-$builder->register('/:user/{year}/{month:\d+}', 'dispatch_month');
-$builder->register('/download/*', 'dispatch_download');
+$builder->add('/', 'dispatch_root');
+$builder->add('/entrylist', 'dispatch_entrylist');
+$builder->add('/:user', 'dispatch_user');
+$builder->add('/:user/{year}', 'dispatch_year');
+$builder->add('/:user/{year}/{month:\d+}', 'dispatch_month');
+$builder->add('/download/*', 'dispatch_download');
 
 my $router = $builder->compile;
 is_deeply [$router->match('/')], [
