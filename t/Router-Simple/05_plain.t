@@ -3,10 +3,9 @@ use warnings;
 use Router::Boom;
 use Test::More;
 
-my $b = Router::Boom->new();
-$b->add('/' => {controller => 'Root', action => 'show'});
-$b->add('/p' => {controller => 'Root', action => 'p'});
-my $r = $b->compile;
+my $r = Router::Boom->new();
+$r->add('/' => {controller => 'Root', action => 'show'});
+$r->add('/p' => {controller => 'Root', action => 'p'});
 
 is_deeply(
     [$r->match( '/' )],

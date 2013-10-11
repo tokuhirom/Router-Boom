@@ -12,7 +12,7 @@ $builder->add('/:user/{year}', 'dispatch_year');
 $builder->add('/:user/{year}/{month:\d+}', 'dispatch_month');
 $builder->add('/download/*', 'dispatch_download');
 
-my $router = $builder->compile;
+my $router = $builder;
 is_deeply [$router->match('/')], [
     'dispatch_root', {},
 ];
@@ -28,7 +28,7 @@ is_deeply [$router->match('/gfx/2013/12')], [
 is_deeply [$router->match('/gfx/2013/gorou')], [ ];
 is_deeply [$router->match('/download/foo/bar/baz.zip')], [
     'dispatch_download',
-    {__splat__ => 'foo/bar/baz.zip'},
+    {'*' => 'foo/bar/baz.zip'},
 ];
 
 

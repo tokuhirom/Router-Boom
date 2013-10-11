@@ -3,13 +3,12 @@ use warnings;
 use Router::Boom;
 use Test::More;
 
-my $b = Router::Boom->new();
-$b->add('/' => {controller => 'Root', action => 'show', method => 'GET'});
-$b->add('/blog/{year}/{month}', {controller => 'Blog', action => 'monthly', method => 'GET'});
-$b->add('/blog/{year:\d{1,4}}/{month:\d{2}}/{day:\d\d}', {controller => 'Blog', action => 'daily'}, {method => 'GET'});
-$b->add('/:controller/:action');
-$b->add('/comment', {controller => 'Comment', 'action' => 'create'}, {method => 'POST'});
-my $r = $b->compile;
+my $r = Router::Boom->new();
+$r->add('/' => {controller => 'Root', action => 'show', method => 'GET'});
+$r->add('/blog/{year}/{month}', {controller => 'Blog', action => 'monthly', method => 'GET'});
+$r->add('/blog/{year:\d{1,4}}/{month:\d{2}}/{day:\d\d}', {controller => 'Blog', action => 'daily'}, {method => 'GET'});
+$r->add('/:controller/:action');
+$r->add('/comment', {controller => 'Comment', 'action' => 'create'}, {method => 'POST'});
 note $r->regexp;
 
 is_deeply(

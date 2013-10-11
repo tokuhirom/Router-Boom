@@ -19,21 +19,62 @@ use re 'eval';
 use Router::Boom::Node;
 use Router::Boom::Compiled;
 
-sub new {
-    my $class = shift;
-    bless { }, $class;
-}
+use Moo;
+
+has root => (
+    is => 'ro',
+    default => sub {
+        Router::Boom::Node->new(key => '/');
+    },
+);
+
+has compiled => (
+    is => 'lazy',
+    clearer => 1,
+    handles => [qw(match regexp)],
+);
+
+no Moo;
 
 sub add {
     my ($self, $path, $stuff) = @_;
     $path =~ s!\A/!!;
-    push @{$self->{routes}}, [$path, $stuff];
+
+    $self->clear_compiled();
+
+    my $p = $self->root;
+    my @capture;
+    $path =~ s!
+        \{((?:\{[0-9,]+\}|[^{}]+)+)\} | # /blog/{year:\d{4}}
+        :([A-Za-z0-9_]+)              | # /blog/:year
+        (\*)                          | # /blog/*/*
+        ([^{:*]+)                       # normal string
+    !
+        if (defined $1) {
+            my ($name, $pattern) = split /:/, $1, 2;
+            push @capture, $name;
+            $pattern = $pattern ? "($pattern)" : "([^/]+)";
+            $p = $p->add_node($pattern);
+        } elsif (defined $2) {
+            push @capture, $2;
+            $p = $p->add_node("([^/]+)");
+        } elsif (defined $3) {
+            push @capture, '*';
+            $p = $p->add_node("(.+)");
+        } else {
+            $p = $p->add_node(quotemeta $4);
+        }
+        '';
+    !exg;
+    $p->leaf([\@capture, $stuff]);
+
+    return;
 }
 
-sub compile {
+sub _build_compiled {
     my ($self) = @_;
 
-    my $trie = $self->_build_trie();
+    my $trie = $self->root();
     local @LEAVES;
     local $PAREN_CNT = 0;
     local @PARENS;
@@ -73,41 +114,6 @@ sub _to_regexp {
         $re .= '(?:' . join('|', @re) . ')';
     }
     return qr{$re};
-}
-
-sub _build_trie {
-    my $self = shift;
-
-    my $ref = Router::Boom::Node->new(key => '/');
-    for my $route (@{$self->{routes}}) {
-        my ($path, $data) = @$route;
-        my $p = $ref;
-        my @capture;
-        $path =~ s!
-            \{((?:\{[0-9,]+\}|[^{}]+)+)\} | # /blog/{year:\d{4}}
-            :([A-Za-z0-9_]+)              | # /blog/:year
-            (\*)                          | # /blog/*/*
-            ([^{:*]+)                       # normal string
-        !
-            if (defined $1) {
-                my ($name, $pattern) = split /:/, $1, 2;
-                push @capture, $name;
-                $pattern = $pattern ? "($pattern)" : "([^/]+)";
-                $p = $p->add_node($pattern);
-            } elsif (defined $2) {
-                push @capture, $2;
-                $p = $p->add_node("([^/]+)");
-            } elsif (defined $3) {
-                push @capture, '*';
-                $p = $p->add_node("(.+)");
-            } else {
-                $p = $p->add_node(quotemeta $4);
-            }
-            '';
-        !exg;
-        $p->leaf([\@capture, $data]);
-    }
-    return $ref;
 }
 
 1;
