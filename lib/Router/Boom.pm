@@ -24,7 +24,7 @@ sub new {
     bless { }, $class;
 }
 
-sub register {
+sub add {
     my ($self, $path, $stuff) = @_;
     $path =~ s!\A/!!;
     push @{$self->{routes}}, [$path, $stuff];
@@ -98,7 +98,7 @@ sub _build_trie {
                 push @capture, $2;
                 $p = $p->add_node("([^/]+)");
             } elsif (defined $3) {
-                push @capture, '__splat__';
+                push @capture, '*';
                 $p = $p->add_node("(.+)");
             } else {
                 $p = $p->add_node(quotemeta $4);
