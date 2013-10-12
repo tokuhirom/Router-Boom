@@ -2,7 +2,10 @@ Revision history for Perl extension Router-Boom
 
 {{$NEXT}}
 
-    - no Moo;
+0.04 2013-10-12T03:08:23Z
+
+    - no Moo; use Class::Accessor::Lite;
+      (tokuhirom)
 
 0.03 2013-10-12T01:35:35Z
 

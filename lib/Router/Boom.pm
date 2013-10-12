@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp ();
 
-our $VERSION = "0.03";
+our $VERSION = "0.04";
 
 # Matcher stuff
 our $LEAF_IDX;
