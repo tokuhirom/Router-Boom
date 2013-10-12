@@ -43,6 +43,7 @@
       },
       "runtime" : {
          "requires" : {
+            "Class::Accessor::Lite" : "0",
             "perl" : "5.008005"
          }
       },

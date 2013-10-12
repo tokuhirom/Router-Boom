@@ -4,6 +4,11 @@ use warnings;
 use utf8;
 use 5.008_001;
 
+use Class::Accessor::Lite 0.05 (
+    rw => [qw(leaf)],
+    ro => [qw(key children)],
+);
+
 sub new {
     my $class = shift;
     my %args = @_==1 ? %{$_[0]} : @_;
@@ -12,10 +17,6 @@ sub new {
         %args,
     }, $class;
 }
-
-sub key      { $_[0]->{key} }
-sub children { $_[0]->{children} }
-sub leaf     { $_[0]->{leaf} }
 
 use re 'eval';
 
