@@ -18,24 +18,13 @@ our @PARENS;
 use re 'eval';
 
 use Router::Boom::Node;
-use Router::Boom::Compiled;
 
-use Moo;
-
-has root => (
-    is => 'ro',
-    default => sub {
-        Router::Boom::Node->new(key => '/');
-    },
-);
-
-has compiled => (
-    is => 'lazy',
-    clearer => 1,
-    handles => [qw(match regexp)],
-);
-
-no Moo;
+sub new {
+    my $class = shift;
+    my $self = bless { }, $class;
+    $self->{root} = Router::Boom::Node->new(key => '/');
+    return $self;
+}
 
 # True if : ()
 # False if : (?:)
@@ -52,9 +41,9 @@ sub add {
     my ($self, $path, $stuff) = @_;
     $path =~ s!\A/!!;
 
-    $self->clear_compiled();
+    delete $self->{regexp}; # clear cache
 
-    my $p = $self->root;
+    my $p = $self->{root};
     my @capture;
     while ($path =~ m!\G(?:
             \{((?:\{[0-9,]+\}|[^{}]+)+)\} | # /blog/{year:\d{4}}
@@ -86,18 +75,43 @@ sub add {
     return;
 }
 
-sub _build_compiled {
+sub _build_regexp {
     my ($self) = @_;
 
-    my $trie = $self->root();
+    my $trie = $self->{root};
     local @LEAVES;
     local $PAREN_CNT = 0;
     local @PARENS;
     my $re = _to_regexp($trie);
-    return Router::Boom::Compiled->new(
-        regexp => qr{\A$re},
-        leaves => [@LEAVES]
-    );
+    $self->{leaves} = [@LEAVES];
+    $self->{regexp} = qr{\A$re};
+}
+
+sub match {
+    my ($self, $path) = @_;
+
+    # "I think there was a discussion about that a while ago and it is up to apps to deal with empty PATH_INFO as root / iirc"
+    # -- by @miyagawa
+    #
+    # see http://blog.64p.org/entry/2012/10/05/132354
+    $path = '/' if $path eq '';
+
+    if ($path =~ $self->regexp) {
+        my ($captured, $stuff) = @{$self->{leaves}->[$Router::Boom::LEAF_IDX]};
+        my %captured;
+        @captured{@$captured} = @Router::Boom::CAPTURED;
+        return ($stuff, \%captured);
+    } else {
+        return ();
+    }
+}
+
+sub regexp {
+    my $self = shift;
+    if (not exists $self->{regexp}) {
+        $self->_build_regexp();
+    }
+    $self->{regexp};
 }
 
 sub _to_regexp {
