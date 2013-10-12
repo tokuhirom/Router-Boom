@@ -2,6 +2,7 @@ package Router::Boom;
 use 5.008005;
 use strict;
 use warnings;
+use Carp ();
 
 our $VERSION = "0.01";
 
@@ -52,6 +53,9 @@ sub add {
     !
         if (defined $1) {
             my ($name, $pattern) = split /:/, $1, 2;
+            if (defined($pattern) && $pattern =~ /\(/) {
+                Carp::croak("You can't include parens in your custom rule.");
+            }
             push @capture, $name;
             $pattern = $pattern ? "($pattern)" : "([^/]+)";
             $p = $p->add_node($pattern);
@@ -123,15 +127,106 @@ __END__
 
 =head1 NAME
 
-Router::Boom - It's new $module
+Router::Boom - O(1) Routing engine for web applications
 
 =head1 SYNOPSIS
 
     use Router::Boom;
 
+    my $router = Router::Boom->new();
+    $router->add('/', 'dispatch_root');
+    $router->add('/entrylist', 'dispatch_entrylist');
+    $router->add('/:user', 'dispatch_user');
+    $router->add('/:user/{year}', 'dispatch_year');
+    $router->add('/:user/{year}/{month:\d+}', 'dispatch_month');
+    $router->add('/download/*', 'dispatch_download');
+
+    my $dest = $router->match($env->{PATH_INFO});
+
 =head1 DESCRIPTION
 
-Router::Boom is ...
+Router::Boom is a O(1) path routing engine for Perl5.
+
+B<This library is in beta state. Any API will change without notice.>
+
+=head1 MEHTODS
+
+=over 4
+
+=item my $router = Router::Boom->new()
+
+Create new instance.
+
+=item $router->add($path:Str, $destination:Any)
+
+Add new route.
+
+=item my ($destination, $captured) = $router->match($path:Str);
+
+Matching the route. If matching successfully, this method returns 2 values.
+
+First: The destination value, you registered. Second: Captured values from the path.
+
+If matching was failed, this method returns empty list.
+
+=back
+
+=head1 HOW TO WRITE A ROUTING RULE
+
+=head2 plain string 
+
+    $router->add( '/foo', { controller => 'Root', action => 'foo' } );
+
+=head2 :name notation
+
+    $router->add( '/wiki/:page', { controller => 'WikiPage', action => 'show' } );
+    ...
+    $router->match('/wiki/john');
+    # => {controller => 'WikiPage', action => 'show', page => 'john' }
+
+':name' notation matches C<qr{([^/]+)}>.
+
+=head2 '*' notation
+
+    $router->add( '/download/*', { controller => 'Download', action => 'file' } );
+    ...
+    $router->match('/download/path/to/file.xml');
+    # => {controller => 'Download', action => 'file', '*' => 'path/to/file.xml' }
+
+'*' notation matches C<qr{(.+)}>. You will get the captured argument as the special key: C<*>.
+
+=head2 '{year}' notation
+
+    $router->add( '/blog/{year}', { controller => 'Blog', action => 'yearly' } );
+    ...
+    $router->match('/blog/2010');
+    # => {controller => 'Blog', action => 'yearly', year => 2010 }
+
+'{year}' notation matches C<qr{([^/]+)}>, and it will be captured.
+
+=head2 '{year:[0-9]+}' notation
+
+    $router->add( '/blog/{year:[0-9]+}/{month:[0-9]{2}}', { controller => 'Blog', action => 'monthly' } );
+    ...
+    $router->match('/blog/2010/04');
+    # => {controller => 'Blog', action => 'monthly', year => 2010, month => '04' }
+
+You can specify regular expressions in named captures.
+
+Note. You can't include normal capture in custom regular expression. i.e. You can't use C< {year:(\d+)} >.
+
+=head1 PERFORMANCE
+
+Router::Boom is pretty fast!
+
+                      Rate Router::Simple   Router::Boom
+    Router::Simple  8000/s             --           -90%
+    Router::Boom   83651/s           946%             --
+
+Router::Boom is O(1) router. Router::Simple is O(n) router.
+
+Then, Router::Simple get slower if registered too much routes.
+But if you're using Router::Boom then you don't care the performance :)
 
 =head1 LICENSE
 
@@ -143,6 +238,18 @@ it under the same terms as Perl itself.
 =head1 AUTHOR
 
 tokuhirom E<lt>tokuhirom@gmail.comE<gt>
+
+=head1 SEE ALSO
+
+L<Router::Simple> is my old one. But it's bit slow and complicated.
+
+L<Path::Dispatcher> is similar, but so complex.
+
+L<Path::Router> is heavy. It depends on L<Moose>.
+
+L<HTTP::Router> has many dependencies. It is not well documented.
+
+L<HTTPx::Dispatcher> is my old one. It does not provide an OO-ish interface.
 
 =cut
 

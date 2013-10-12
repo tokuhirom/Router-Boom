@@ -1,5 +1,5 @@
 {
-   "abstract" : "It's new $module",
+   "abstract" : "O(1) Routing engine for web applications",
    "author" : [
       "tokuhirom <tokuhirom@gmail.com>"
    ],
@@ -42,6 +42,7 @@
       },
       "runtime" : {
          "requires" : {
+            "Moo" : "1.003001",
             "perl" : "5.008005"
          }
       },
@@ -52,5 +53,16 @@
       }
    },
    "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/tokuhirom/Router-Boom/issues"
+      },
+      "homepage" : "https://github.com/tokuhirom/Router-Boom",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/tokuhirom/Router-Boom.git",
+         "web" : "https://github.com/tokuhirom/Router-Boom"
+      }
+   },
    "version" : "0.01"
 }

@@ -1,14 +1,101 @@
 # NAME
 
-Router::Boom - It's new $module
+Router::Boom - O(1) Routing engine for web applications
 
 # SYNOPSIS
 
     use Router::Boom;
 
+    my $router = Router::Boom->new();
+    $router->add('/', 'dispatch_root');
+    $router->add('/entrylist', 'dispatch_entrylist');
+    $router->add('/:user', 'dispatch_user');
+    $router->add('/:user/{year}', 'dispatch_year');
+    $router->add('/:user/{year}/{month:\d+}', 'dispatch_month');
+    $router->add('/download/*', 'dispatch_download');
+
+    my $dest = $router->match($env->{PATH_INFO});
+
 # DESCRIPTION
 
-Router::Boom is ...
+Router::Boom is a O(1) path routing engine for Perl5.
+
+__This library is in beta state. Any API will change without notice.__
+
+# MEHTODS
+
+- my $router = Router::Boom->new()
+
+    Create new instance.
+
+- $router->add($path:Str, $destination:Any)
+
+    Add new route.
+
+- my ($destination, $captured) = $router->match($path:Str);
+
+    Matching the route. If matching successfully, this method returns 2 values.
+
+    First: The destination value, you registered. Second: Captured values from the path.
+
+    If matching was failed, this method returns empty list.
+
+# HOW TO WRITE A ROUTING RULE
+
+## plain string 
+
+    $router->add( '/foo', { controller => 'Root', action => 'foo' } );
+
+## :name notation
+
+    $router->add( '/wiki/:page', { controller => 'WikiPage', action => 'show' } );
+    ...
+    $router->match('/wiki/john');
+    # => {controller => 'WikiPage', action => 'show', page => 'john' }
+
+':name' notation matches `qr{([^/]+)}`.
+
+## '\*' notation
+
+    $router->add( '/download/*', { controller => 'Download', action => 'file' } );
+    ...
+    $router->match('/download/path/to/file.xml');
+    # => {controller => 'Download', action => 'file', '*' => 'path/to/file.xml' }
+
+'\*' notation matches `qr{(.+)}`. You will get the captured argument as the special key: `*`.
+
+## '{year}' notation
+
+    $router->add( '/blog/{year}', { controller => 'Blog', action => 'yearly' } );
+    ...
+    $router->match('/blog/2010');
+    # => {controller => 'Blog', action => 'yearly', year => 2010 }
+
+'{year}' notation matches `qr{([^/]+)}`, and it will be captured.
+
+## '{year:\[0-9\]+}' notation
+
+    $router->add( '/blog/{year:[0-9]+}/{month:[0-9]{2}}', { controller => 'Blog', action => 'monthly' } );
+    ...
+    $router->match('/blog/2010/04');
+    # => {controller => 'Blog', action => 'monthly', year => 2010, month => '04' }
+
+You can specify regular expressions in named captures.
+
+Note. You can't include normal capture in custom regular expression. i.e. You can't use ` {year:(\d+)} `.
+
+# PERFORMANCE
+
+Router::Boom is pretty fast!
+
+                      Rate Router::Simple   Router::Boom
+    Router::Simple  8000/s             --           -90%
+    Router::Boom   83651/s           946%             --
+
+Router::Boom is O(1) router. Router::Simple is O(n) router.
+
+Then, Router::Simple get slower if registered too much routes.
+But if you're using Router::Boom then you don't care the performance :)
 
 # LICENSE
 
@@ -20,3 +107,15 @@ it under the same terms as Perl itself.
 # AUTHOR
 
 tokuhirom <tokuhirom@gmail.com>
+
+# SEE ALSO
+
+[Router::Simple](http://search.cpan.org/perldoc?Router::Simple) is my old one. But it's bit slow and complicated.
+
+[Path::Dispatcher](http://search.cpan.org/perldoc?Path::Dispatcher) is similar, but so complex.
+
+[Path::Router](http://search.cpan.org/perldoc?Path::Router) is heavy. It depends on [Moose](http://search.cpan.org/perldoc?Moose).
+
+[HTTP::Router](http://search.cpan.org/perldoc?HTTP::Router) has many dependencies. It is not well documented.
+
+[HTTPx::Dispatcher](http://search.cpan.org/perldoc?HTTPx::Dispatcher) is my old one. It does not provide an OO-ish interface.
