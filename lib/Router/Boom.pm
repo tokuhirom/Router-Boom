@@ -37,6 +37,17 @@ has compiled => (
 
 no Moo;
 
+# True if : ()
+# False if : (?:)
+sub _is_normal_capture {
+    $_[0] =~ /
+        \(
+            (?!
+                \?:
+            )
+    /x
+}
+
 sub add {
     my ($self, $path, $stuff) = @_;
     $path =~ s!\A/!!;
@@ -53,7 +64,7 @@ sub add {
     !
         if (defined $1) {
             my ($name, $pattern) = split /:/, $1, 2;
-            if (defined($pattern) && $pattern =~ /\(/) {
+            if (defined($pattern) && _is_normal_capture($pattern)) {
                 Carp::croak("You can't include parens in your custom rule.");
             }
             push @capture, $name;
@@ -214,6 +225,7 @@ If matching was failed, this method returns empty list.
 You can specify regular expressions in named captures.
 
 Note. You can't include normal capture in custom regular expression. i.e. You can't use C< {year:(\d+)} >.
+But you can use C<< {year:(?:\d+)} >>.
 
 =head1 PERFORMANCE
 
