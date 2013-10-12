@@ -83,6 +83,7 @@ __This library is in beta state. Any API will change without notice.__
 You can specify regular expressions in named captures.
 
 Note. You can't include normal capture in custom regular expression. i.e. You can't use ` {year:(\d+)} `.
+But you can use `{year:(?:\d+)}`.
 
 # PERFORMANCE
 

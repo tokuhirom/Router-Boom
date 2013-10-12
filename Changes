@@ -2,6 +2,11 @@ Revision history for Perl extension Router-Boom
 
 {{$NEXT}}
 
+0.02 2013-10-12T01:27:00Z
+
+    - `{year:(?:.)}` style capturing.
+      (tokuhirom)
+
 0.01 2013-10-12T00:25:18Z
 
     - original version
