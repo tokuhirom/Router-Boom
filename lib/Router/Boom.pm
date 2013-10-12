@@ -56,12 +56,13 @@ sub add {
 
     my $p = $self->root;
     my @capture;
-    $path =~ s!
-        \{((?:\{[0-9,]+\}|[^{}]+)+)\} | # /blog/{year:\d{4}}
-        :([A-Za-z0-9_]+)              | # /blog/:year
-        (\*)                          | # /blog/*/*
-        ([^{:*]+)                       # normal string
-    !
+    while ($path =~ m!\G(?:
+            \{((?:\{[0-9,]+\}|[^{}]+)+)\} | # /blog/{year:\d{4}}
+            :([A-Za-z0-9_]+)              | # /blog/:year
+            (\*)                          | # /blog/*/*
+            ([^{:*]+)                       # normal string
+        )!xg) {
+
         if (defined $1) {
             my ($name, $pattern) = split /:/, $1, 2;
             if (defined($pattern) && _is_normal_capture($pattern)) {
@@ -79,8 +80,7 @@ sub add {
         } else {
             $p = $p->add_node(quotemeta $4);
         }
-        '';
-    !exg;
+    }
     $p->leaf([\@capture, $stuff]);
 
     return;
