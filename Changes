@@ -2,6 +2,11 @@ Revision history for Perl extension Router-Boom
 
 {{$NEXT}}
 
+0.03 2013-10-12T01:35:35Z
+
+    - use m// op with \G instead of s///
+      (gfx)
+
 0.02 2013-10-12T01:27:00Z
 
     - `{year:(?:.)}` style capturing.
