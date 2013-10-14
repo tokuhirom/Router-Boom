@@ -43,7 +43,7 @@
       },
       "runtime" : {
          "requires" : {
-            "Class::Accessor::Lite" : "0",
+            "Class::Accessor::Lite" : "0.05",
             "perl" : "5.008005"
          }
       },
@@ -65,8 +65,9 @@
          "web" : "https://github.com/tokuhirom/Router-Boom"
       }
    },
-   "version" : "0.04",
+   "version" : "0.05",
    "x_contributors" : [
-      "Fuji, Goro <goro-fuji@cookpad.com>"
+      "Fuji, Goro <goro-fuji@cookpad.com>",
+      "Syohei YOSHIDA <syohex@gmail.com>"
    ]
 }
