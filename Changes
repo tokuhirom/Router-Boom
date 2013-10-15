@@ -2,6 +2,11 @@ Revision history for Perl extension Router-Boom
 
 {{$NEXT}}
 
+0.06 2013-10-15T23:20:45Z
+
+    - Added Router::Boom::Method
+      (tokuhirom)
+
 0.05 2013-10-14T00:04:37Z
 
     - Fixed deps
