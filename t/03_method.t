@@ -9,6 +9,7 @@ $r->add('GET',  '/a', 'g');
 $r->add('POST', '/a', 'p');
 $r->add(undef,  '/b', 'any');
 $r->add('GET',  '/c', 'get only');
+$r->add(['GET', 'HEAD'],  '/d', 'get/head');
 
 subtest 'GET /' => sub {
     ok !$r->match('GET', '/');
@@ -46,6 +47,21 @@ subtest 'POST /c' => sub {
     is $a, undef;
     is_deeply $b, undef;
     is $c, 1;
+};
+
+subtest '/d' => sub {
+    subtest 'GET' => sub {
+        my ($a,$b,$c) = $r->match('GET', '/d');
+        is $a, 'get/head';
+    };
+    subtest 'HEAD' => sub {
+        my ($a,$b,$c) = $r->match('HEAD', '/d');
+        is $a, 'get/head';
+    };
+    subtest 'POST' => sub {
+        my ($a,$b,$c) = $r->match('POST', '/d');
+        is $a, undef;
+    };
 };
 
 done_testing;

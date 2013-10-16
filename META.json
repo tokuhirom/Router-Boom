@@ -65,7 +65,7 @@
          "web" : "https://github.com/tokuhirom/Router-Boom"
       }
    },
-   "version" : "0.06",
+   "version" : "0.07",
    "x_contributors" : [
       "Fuji, Goro <goro-fuji@cookpad.com>",
       "Syohei YOSHIDA <syohex@gmail.com>"

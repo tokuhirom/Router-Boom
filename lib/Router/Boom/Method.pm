@@ -6,7 +6,7 @@ use 5.008_005;
 
 use Router::Boom;
 
-our $VERSION = "0.06";
+our $VERSION = "0.07";
 
 sub new {
     my $class = shift;
@@ -19,8 +19,22 @@ sub add {
 
     delete $self->{router}; # clear cache
 
+    if (defined($method) && !ref($method)) {
+        $method = [$method];
+    }
+
     push @{$self->{path}}, $path;
     push @{$self->{data}->{$path}}, $method, $opaque;
+}
+
+sub _method_match {
+    my ($request_method, $matcher) = @_;
+    return 1 if not defined($matcher);
+
+    for my $m (@$matcher) {
+        return 1 if $m eq $request_method;
+    }
+    return 0;
 }
 
 sub match {
@@ -30,7 +44,7 @@ sub match {
 
     if (my ($data, $captured) = $self->{router}->match($path)) {
         for (my $i=0; $i<@$data; $i+=2) {
-            if (!$data->[$i] || $request_method eq $data->[$i]) {
+            if (_method_match($request_method, $data->[$i])) {
                 return ($data->[$i+1], $captured, 0);
             }
         }
@@ -80,12 +94,13 @@ Then, this class helps you.
 
 Create new instance.
 
-=item C<< $router->add($http_method:Str, $path:Str, $opaque:Any) >>
+=item C<< $router->add($http_method:Str|ArrayRef[Str], $path:Str, $opaque:Any) >>
 
 Add new path to the router.
 
 C<$http_method> is a string to represent HTTP method. i.e. GET, POST, DELETE, PUT, etc.
 The path can handle any HTTP methods, you'll path the C<undef> for this argument.
+You can specify the multiple HTTP methods in ArrayRef like C<< $router->add([qw(GET HEAD)], '/', 'top') >>.
 It will be matching with the C<REQUEST_METHOD>.
 
 C<$path> is the path string. It will be matching with the C<PATH_INFO>.
