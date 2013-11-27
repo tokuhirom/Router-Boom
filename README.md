@@ -1,6 +1,6 @@
 # NAME
 
-Router::Boom - O(1) Routing engine for web applications
+Router::Boom - Fast routing engine for web applications
 
 # SYNOPSIS
 
@@ -18,9 +18,7 @@ Router::Boom - O(1) Routing engine for web applications
 
 # DESCRIPTION
 
-Router::Boom is a O(1) path routing engine for Perl5.
-
-__This library is in beta state. Any API will change without notice.__
+Router::Boom is a fast path routing engine for Perl5.
 
 # MEHTODS
 
@@ -93,7 +91,7 @@ Router::Boom is pretty fast!
     Router::Simple  8000/s             --           -90%
     Router::Boom   83651/s           946%             --
 
-Router::Boom is O(1) router. Router::Simple is O(n) router.
+Router::Boom's computational complexity is not linear scale, bug Router::Simple's computational complexity is linear scale.
 
 Then, Router::Simple get slower if registered too much routes.
 But if you're using Router::Boom then you don't care the performance :)

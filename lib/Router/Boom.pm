@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use Carp ();
 
-our $VERSION = "0.07";
+our $VERSION = "1.00";
 
 # Matcher stuff
 our $LEAF_IDX;
@@ -152,7 +152,7 @@ __END__
 
 =head1 NAME
 
-Router::Boom - O(1) Routing engine for web applications
+Router::Boom - Fast routing engine for web applications
 
 =head1 SYNOPSIS
 
@@ -170,9 +170,7 @@ Router::Boom - O(1) Routing engine for web applications
 
 =head1 DESCRIPTION
 
-Router::Boom is a O(1) path routing engine for Perl5.
-
-B<This library is in beta state. Any API will change without notice.>
+Router::Boom is a fast path routing engine for Perl5.
 
 =head1 MEHTODS
 
@@ -249,7 +247,7 @@ Router::Boom is pretty fast!
     Router::Simple  8000/s             --           -90%
     Router::Boom   83651/s           946%             --
 
-Router::Boom is O(1) router. Router::Simple is O(n) router.
+Router::Boom's computational complexity is not linear scale, bug Router::Simple's computational complexity is linear scale.
 
 Then, Router::Simple get slower if registered too much routes.
 But if you're using Router::Boom then you don't care the performance :)

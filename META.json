@@ -1,10 +1,10 @@
 {
-   "abstract" : "O(1) Routing engine for web applications",
+   "abstract" : "Fast routing engine for web applications",
    "author" : [
       "tokuhirom <tokuhirom@gmail.com>"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v0.7.5, CPAN::Meta::Converter version 2.132510",
+   "generated_by" : "Minilla/v0.11.0, CPAN::Meta::Converter version 2.132830",
    "license" : [
       "perl_5"
    ],
@@ -65,7 +65,7 @@
          "web" : "https://github.com/tokuhirom/Router-Boom"
       }
    },
-   "version" : "0.07",
+   "version" : "1.00",
    "x_contributors" : [
       "Fuji, Goro <goro-fuji@cookpad.com>",
       "Syohei YOSHIDA <syohex@gmail.com>"
