@@ -2,6 +2,10 @@ Revision history for Perl extension Router-Boom
 
 {{$NEXT}}
 
+1.01 2014-02-24T08:07:41Z
+
+    - Added EXPERIMENTAL 'Router::Boom::Method#routes' method.
+
 1.00 2013-11-27T00:25:59Z
 
     - Bump up to 1.00.
