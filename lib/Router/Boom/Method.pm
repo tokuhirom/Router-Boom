@@ -146,7 +146,7 @@ Get a compiled regexp for debugging.
 
 B<EXPERIMENTAL>
 
-Get the list of routes. Every routes has following schema.
+Get the list of registered routes. Every routes has following schema.
 
     [Maybe[ArrayRef], Str, Any]
 

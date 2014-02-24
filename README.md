@@ -109,12 +109,12 @@ tokuhirom <tokuhirom@gmail.com>
 
 # SEE ALSO
 
-[Router::Simple](http://search.cpan.org/perldoc?Router::Simple) is my old one. But it's bit slow and complicated.
+[Router::Simple](https://metacpan.org/pod/Router::Simple) is my old one. But it's bit slow and complicated.
 
-[Path::Dispatcher](http://search.cpan.org/perldoc?Path::Dispatcher) is similar, but so complex.
+[Path::Dispatcher](https://metacpan.org/pod/Path::Dispatcher) is similar, but so complex.
 
-[Path::Router](http://search.cpan.org/perldoc?Path::Router) is heavy. It depends on [Moose](http://search.cpan.org/perldoc?Moose).
+[Path::Router](https://metacpan.org/pod/Path::Router) is heavy. It depends on [Moose](https://metacpan.org/pod/Moose).
 
-[HTTP::Router](http://search.cpan.org/perldoc?HTTP::Router) has many dependencies. It is not well documented.
+[HTTP::Router](https://metacpan.org/pod/HTTP::Router) has many dependencies. It is not well documented.
 
-[HTTPx::Dispatcher](http://search.cpan.org/perldoc?HTTPx::Dispatcher) is my old one. It does not provide an OO-ish interface.
+[HTTPx::Dispatcher](https://metacpan.org/pod/HTTPx::Dispatcher) is my old one. It does not provide an OO-ish interface.
