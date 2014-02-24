@@ -23,8 +23,23 @@ sub add {
         $method = [$method];
     }
 
-    push @{$self->{path}}, $path;
-    push @{$self->{data}->{$path}}, $method, $opaque;
+    unless ($self->{path_seen}->{$path}++) {
+        push @{$self->{path}}, $path;
+    }
+    push @{$self->{data}->{$path}}, [$method, $opaque];
+}
+
+sub routes {
+    my $self = shift;
+
+    my @routes;
+    for my $path (@{$self->{path}}) {
+        for my $route (@{$self->{data}->{$path}}) {
+            my ($method, $opaque) = @$route;
+            push @routes, [ $method, $path, $opaque ];
+        }
+    }
+    return @routes;
 }
 
 sub _method_match {
@@ -42,10 +57,10 @@ sub match {
 
     $self->{router} ||= $self->_build_router();
 
-    if (my ($data, $captured) = $self->{router}->match($path)) {
-        for (my $i=0; $i<@$data; $i+=2) {
-            if (_method_match($request_method, $data->[$i])) {
-                return ($data->[$i+1], $captured, 0);
+    if (my ($patterns, $captured) = $self->{router}->match($path)) {
+        for my $pattern (@$patterns) {
+            if (_method_match($request_method, $pattern->[0])) {
+                return ($pattern->[1], $captured, 0);
             }
         }
         return (undef, undef, 1);
@@ -126,6 +141,18 @@ If the request path is matched but the C<$http_method> is not matched, then C<$d
 =item C<< my $regexp = $router->regexp() >>
 
 Get a compiled regexp for debugging.
+
+=item C<< my @routes = $router->routes() >>
+
+B<EXPERIMENTAL>
+
+Get the list of routes. Every routes has following schema.
+
+    [Maybe[ArrayRef], Str, Any]
+
+For example:
+
+    [['GET','HEAD'], "/foo", \&dispatch_foo]
 
 =back
 

@@ -64,5 +64,15 @@ subtest '/d' => sub {
     };
 };
 
+subtest '"routes" method', sub {
+    is_deeply [$r->routes], [
+        [['GET'], '/a', 'g'],
+        [['POST'], '/a', 'p'],
+        [undef, '/b', 'any'],
+        [['GET'], '/c', 'get only'],
+        [['GET', 'HEAD'], '/d', 'get/head'],
+    ];
+};
+
 done_testing;
 
