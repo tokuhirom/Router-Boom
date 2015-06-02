@@ -2,6 +2,7 @@ use strict;
 use warnings;
 use utf8;
 use Test::More;
+use Test::Deep;
 use Router::Boom::Method;
 
 my $r = Router::Boom::Method->new();
@@ -16,51 +17,65 @@ subtest 'GET /' => sub {
 };
 
 subtest 'GET /a' => sub {
-    my ($a,$b,$c) = $r->match('GET', '/a');
+    my ($a,$b,$c,$d) = $r->match('GET', '/a');
     is $a, 'g';
     is_deeply $b, {};
     is $c, 0;
+    cmp_deeply $d, [];
 };
 subtest 'POST /a' => sub {
-    my ($a,$b,$c) = $r->match('POST', '/a');
+    my ($a,$b,$c,$d) = $r->match('POST', '/a');
     is $a, 'p';
     is_deeply $b, {};
     is $c, 0;
+    cmp_deeply $d, [];
 };
 
-subtest 'GET /b' => sub {
-    my ($a,$b,$c) = $r->match('POST', '/b');
-    is $a, 'any';
-    is_deeply $b, {};
-    is $c, 0;
-};
-
-subtest 'GET /c' => sub {
-    my ($a,$b,$c) = $r->match('GET', '/c');
-    is $a, 'get only';
-    is_deeply $b, {};
-    is $c, 0;
-};
-
-subtest 'POST /c' => sub {
-    my ($a,$b,$c) = $r->match('POST', '/c');
+subtest '/a' => sub {
+    my ($a,$b,$c,$d) = $r->match('HEAD', '/a');
     is $a, undef;
     is_deeply $b, undef;
     is $c, 1;
+    cmp_deeply $d, bag('GET', 'POST');
+};
+
+subtest 'GET /b' => sub {
+    my ($a,$b,$c,$d) = $r->match('POST', '/b');
+    is $a, 'any';
+    is_deeply $b, {};
+    is $c, 0;
+    cmp_deeply $d, [];
+};
+
+subtest 'GET /c' => sub {
+    my ($a,$b,$c,$d) = $r->match('GET', '/c');
+    is $a, 'get only';
+    is_deeply $b, {};
+    is $c, 0;
+    cmp_deeply $d, [];
+};
+
+subtest 'POST /c' => sub {
+    my ($a,$b,$c,$d) = $r->match('POST', '/c');
+    is $a, undef;
+    is_deeply $b, undef;
+    is $c, 1;
+    cmp_deeply $d, bag('GET');
 };
 
 subtest '/d' => sub {
     subtest 'GET' => sub {
-        my ($a,$b,$c) = $r->match('GET', '/d');
+        my ($a,$b,$c,$d) = $r->match('GET', '/d');
         is $a, 'get/head';
     };
     subtest 'HEAD' => sub {
-        my ($a,$b,$c) = $r->match('HEAD', '/d');
+        my ($a,$b,$c,$d) = $r->match('HEAD', '/d');
         is $a, 'get/head';
     };
     subtest 'POST' => sub {
-        my ($a,$b,$c) = $r->match('POST', '/d');
+        my ($a,$b,$c,$d) = $r->match('POST', '/d');
         is $a, undef;
+        cmp_deeply $d, bag('GET', 'HEAD');
     };
 };
 
