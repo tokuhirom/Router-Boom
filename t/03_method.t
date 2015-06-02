@@ -31,7 +31,7 @@ subtest 'POST /a' => sub {
     cmp_deeply $d, [];
 };
 
-subtest '/a' => sub {
+subtest 'HEAD /a' => sub {
     my ($a,$b,$c,$d) = $r->match('HEAD', '/a');
     is $a, undef;
     is_deeply $b, undef;
