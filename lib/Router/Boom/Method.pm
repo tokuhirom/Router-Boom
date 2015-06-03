@@ -58,12 +58,14 @@ sub match {
     $self->{router} ||= $self->_build_router();
 
     if (my ($patterns, $captured) = $self->{router}->match($path)) {
+        my @allowed_methods;
         for my $pattern (@$patterns) {
             if (_method_match($request_method, $pattern->[0])) {
-                return ($pattern->[1], $captured, 0);
+                return ($pattern->[1], $captured, 0, []);
             }
+            push @allowed_methods, @{$pattern->[0]};
         }
-        return (undef, undef, 1);
+        return (undef, undef, 1, \@allowed_methods);
     } else {
         return;
     }
@@ -122,7 +124,7 @@ C<$path> is the path string. It will be matching with the C<PATH_INFO>.
 
 C<$opaque> is the destination path data. Any data is OK.
 
-=item C<< my ($dest, $captured, $is_method_not_allowed) = $router->match($http_method:Str, $path:Str) >>
+=item C<< my ($dest, $captured, $is_method_not_allowed, $allowed_methods) = $router->match($http_method:Str, $path:Str) >>
 
 Matching with the router.
 
@@ -137,6 +139,8 @@ If the request is not matching with any path, this method returns empty list.
 If the request is matched well then, return C<$dest>, C<$captured>. And C<$is_method_not_allowed> is false value.
 
 If the request path is matched but the C<$http_method> is not matched, then C<$dest> and C<$captured> is undef. And C<$is_method_not_allowed> is true value. You got this then you need to return C<405 Method Not Allowed> error.
+
+If the request path is matched but the C<$http_method> is not matched, then C<$dest> and C<$captured> is undef. And C<$allowed_methods> is ArrayRef. You got this then you need to return C<405 Method Not Allowed> error with C<Allow> header.
 
 =item C<< my $regexp = $router->regexp() >>
 
