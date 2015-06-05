@@ -2,6 +2,11 @@ Revision history for Perl extension Router-Boom
 
 {{$NEXT}}
 
+1.02 2015-06-05T07:02:54Z
+
+    - RouterBoom#match() return allowed methods.
+      (Hiroyoshi Houchi)
+
 1.01 2014-02-24T08:07:41Z
 
     - Added EXPERIMENTAL 'Router::Boom::Method#routes' method.
