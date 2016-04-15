@@ -49,7 +49,7 @@ Router::Boom is a fast path routing engine for Perl5.
     $router->add( '/wiki/:page', { controller => 'WikiPage', action => 'show' } );
     ...
     $router->match('/wiki/john');
-    # => {controller => 'WikiPage', action => 'show', page => 'john' }
+    # => {controller => 'WikiPage', action => 'show'}, {page => 'john'}
 
 ':name' notation matches `qr{([^/]+)}`.
 
@@ -58,7 +58,7 @@ Router::Boom is a fast path routing engine for Perl5.
     $router->add( '/download/*', { controller => 'Download', action => 'file' } );
     ...
     $router->match('/download/path/to/file.xml');
-    # => {controller => 'Download', action => 'file', '*' => 'path/to/file.xml' }
+    # => {controller => 'Download', action => 'file'}, {'*' => 'path/to/file.xml'}
 
 '\*' notation matches `qr{(.+)}`. You will get the captured argument as the special key: `*`.
 
@@ -67,7 +67,7 @@ Router::Boom is a fast path routing engine for Perl5.
     $router->add( '/blog/{year}', { controller => 'Blog', action => 'yearly' } );
     ...
     $router->match('/blog/2010');
-    # => {controller => 'Blog', action => 'yearly', year => 2010 }
+    # => {controller => 'Blog', action => 'yearly'}, {year => 2010}
 
 '{year}' notation matches `qr{([^/]+)}`, and it will be captured.
 
@@ -76,7 +76,7 @@ Router::Boom is a fast path routing engine for Perl5.
     $router->add( '/blog/{year:[0-9]+}/{month:[0-9]{2}}', { controller => 'Blog', action => 'monthly' } );
     ...
     $router->match('/blog/2010/04');
-    # => {controller => 'Blog', action => 'monthly', year => 2010, month => '04' }
+    # => {controller => 'Blog', action => 'monthly'}, {year => 2010, month => '04'}
 
 You can specify regular expressions in named captures.
 
