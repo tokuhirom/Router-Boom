@@ -2,6 +2,14 @@ Revision history for Perl extension Router-Boom
 
 {{$NEXT}}
 
+1.03 2016-04-17T07:03:31Z
+
+    commit 6c63b7b3f9ca1cd72f02fd3891b8a615ae58ba3a
+    Author: Syohei YOSHIDA <syohex@gmail.com>
+    Date:   Fri Apr 15 16:29:38 2016 +0900
+
+        Correct return values in document
+
 1.02 2015-06-05T07:02:54Z
 
     - RouterBoom#match() return allowed methods.

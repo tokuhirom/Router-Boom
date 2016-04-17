@@ -6,7 +6,7 @@ use 5.008_005;
 
 use Router::Boom;
 
-our $VERSION = "1.02";
+our $VERSION = "1.03";
 
 sub new {
     my $class = shift;
