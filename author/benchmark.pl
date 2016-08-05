@@ -44,9 +44,9 @@ my $router_simple = do {
 
 cmpthese(
     -1, {
-        'Router::Simple'         => sub { $router_simple->match('/dankogai/2013/02') },
-        'Router::Boom'           => sub { $router_boom->match('/dankogai/2013/02') },
-        'Router::Boom::Method'   => sub { $router_boom_method->match('GET', '/dankogai/2013/02') },
+        'Router::Simple'         => sub { $router_simple->match('/dankogai/2013/02/') },
+        'Router::Boom'           => sub { $router_boom->match('/dankogai/2013/02/') },
+        'Router::Boom::Method'   => sub { $router_boom_method->match('GET', '/dankogai/2013/02/') },
     }
 );
 
